@@ -19,7 +19,7 @@ class BookController extends AbstractController
         $this->bookManager = $bookManager;
     }
 
-    #[Route('/book', name: 'book_index')]
+    #[Route('/books', name: 'book_index')]
     public function list(): Response
     {
         $books = $this->bookManager->getBooks();
