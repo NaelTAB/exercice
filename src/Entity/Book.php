@@ -1,44 +1,31 @@
 <?php
+
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\BookRepository")
- */
+#[ORM\Entity(repositoryClass: "App\Repository\BookRepository")]
 class Book
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: "integer")]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $title;
+    #[ORM\Column(type: "string", length: 255)]
+    private string $title;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $author;
+    #[ORM\Column(type: "string", length: 255)]
+    private string $author;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $year;
+    #[ORM\Column(type: "integer")]
+    private int $year;
 
-    /**
-     * @ORM\Column(type="text")
-     */
-    private $description;
+    #[ORM\Column(type: "text")]
+    private string $description;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $imageUrl;
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $imageUrl = null;
 
     // Getters et Setters
     public function getId(): ?int
@@ -46,7 +33,7 @@ class Book
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -57,7 +44,7 @@ class Book
         return $this;
     }
 
-    public function getAuthor(): ?string
+    public function getAuthor(): string
     {
         return $this->author;
     }
@@ -68,7 +55,7 @@ class Book
         return $this;
     }
 
-    public function getYear(): ?int
+    public function getYear(): int
     {
         return $this->year;
     }
@@ -79,7 +66,7 @@ class Book
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -101,4 +88,3 @@ class Book
         return $this;
     }
 }
-?>
