@@ -28,9 +28,8 @@ class BookController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/books/add", name="book_add", methods={"POST"})
-     */
+    
+    #[Route("/books/add", name="book_add", methods=["POST"])]
     public function add(Request $request): Response
     {
         $title = $request->request->get('title');
@@ -44,9 +43,9 @@ class BookController extends AbstractController
         return $this->redirectToRoute('book_list');
     }
 
-    /**
-     * @Route("/books/edit/{id}", name="book_edit", methods={"POST"})
-     */
+    
+    #[Route("/books/edit/{id}", name="book_edit", methods=["POST"])]
+    
     public function edit(Request $request, int $id): Response
     {
         $title = $request->request->get('title');
@@ -60,9 +59,9 @@ class BookController extends AbstractController
         return $this->redirectToRoute('book_list');
     }
 
-    /**
-     * @Route("/books/delete/{id}", name="book_delete", methods={"POST"})
-     */
+    
+    #[Route("/books/delete/{id}", name="book_delete", methods=["POST"])]
+     
     public function delete(int $id): Response
     {
         $this->bookManager->deleteBook($id);
