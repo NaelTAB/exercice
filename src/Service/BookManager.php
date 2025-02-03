@@ -1,64 +1,60 @@
 <?php
+// src/Service/BookManager.php
 namespace App\Service;
+
+use App\Entity\Book;
+use Doctrine\ORM\EntityManagerInterface;
 
 class BookManager
 {
-    public function __construct()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+    private EntityManagerInterface $entityManager;
 
-        if (!isset($_SESSION['books'])) {
-            $_SESSION['books'] = [
-                [
-                    "id" => "1",
-                    "title" => "Le Petit Prince",
-                    "author" => "Antoine de Saint-Exupéry",
-                    "year" => "1943",
-                    "description" => "Un livre poétique et philosophique pour enfants et adultes.",
-                    "imageUrl" => "https://example.com/cover.jpg"
-                ]
-            ];
-        }
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
     }
 
     public function getBooks(): array
     {
-        return $_SESSION['books'];
+        return $this->entityManager->getRepository(Book::class)->findAll();
     }
 
-    public function addBook(string $title, string $author, string $year, string $description, string $imageUrl = ""): void
+    public function addBook(string $title, string $author, int $year, string $description, ?string $imageUrl = null): void
     {
-        $newBook = [
-            "id" => uniqid(),
-            "title" => $title,
-            "author" => $author,
-            "year" => $year,
-            "description" => $description,
-            "imageUrl" => $imageUrl
-        ];
-        $_SESSION['books'][] = $newBook;
+        $book = new Book();
+        $book->setTitle($title);
+        $book->setAuthor($author);
+        $book->setYear($year);
+        $book->setDescription($description);
+        $book->setImageUrl($imageUrl);
+
+        $this->entityManager->persist($book);
+        $this->entityManager->flush();
     }
 
-    public function editBook(string $id, string $title, string $author, string $year, string $description, string $imageUrl = ""): void
+    public function editBook(int $id, string $title, string $author, int $year, string $description, ?string $imageUrl = null): void
     {
-        foreach ($_SESSION['books'] as &$book) {
-            if ($book['id'] === $id) {
-                $book['title'] = $title;
-                $book['author'] = $author;
-                $book['year'] = $year;
-                $book['description'] = $description;
-                $book['imageUrl'] = $imageUrl;
-                break;
-            }
+        $book = $this->entityManager->getRepository(Book::class)->find($id);
+
+        if ($book) {
+            $book->setTitle($title);
+            $book->setAuthor($author);
+            $book->setYear($year);
+            $book->setDescription($description);
+            $book->setImageUrl($imageUrl);
+
+            $this->entityManager->flush();
         }
     }
 
-    public function deleteBook(string $id): void
+    public function deleteBook(int $id): void
     {
-        $_SESSION['books'] = array_filter($_SESSION['books'], function ($book) use ($id) {
-            return $book['id'] !== $id;
-        });
+        $book = $this->entityManager->getRepository(Book::class)->find($id);
+
+        if ($book) {
+            $this->entityManager->remove($book);
+            $this->entityManager->flush();
+        }
     }
 }
+?>

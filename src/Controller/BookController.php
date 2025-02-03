@@ -1,4 +1,6 @@
 <?php
+
+// src/Controller/BookController.php
 namespace App\Controller;
 
 use App\Service\BookManager;
@@ -46,7 +48,7 @@ class BookController extends AbstractController
     /**
      * @Route("/books/edit/{id}", name="book_edit", methods={"POST"})
      */
-    public function edit(Request $request, string $id): Response
+    public function edit(Request $request, int $id): Response
     {
         $title = $request->request->get('title');
         $author = $request->request->get('author');
@@ -62,9 +64,10 @@ class BookController extends AbstractController
     /**
      * @Route("/books/delete/{id}", name="book_delete", methods={"POST"})
      */
-    public function delete(string $id): Response
+    public function delete(int $id): Response
     {
         $this->bookManager->deleteBook($id);
         return $this->redirectToRoute('book_list');
     }
 }
+?>
