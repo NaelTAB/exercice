@@ -1,21 +1,18 @@
 <?php
-
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Book;
+use Doctrine\ORM\EntityManagerInterface;
 
-final class BookController extends AbstractController{
-   #[Route('/book', name: 'book_single')]
-public function single(): Response
+class BookController extends AbstractController
 {
-    return new Response('Page d\'un seul livre');
-}
-
+    #[Route('/books', name: 'book_list')]
+    public function list(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('book/index.html.twig', [
-            'controller_name' => 'BookController',
-        ]);
+        $books = $entityManager->getRepository(Book::class)->findAll();
+        return $this->render('book/index.html.twig', ['books' => $books]);
     }
 }
