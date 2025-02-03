@@ -1,40 +1,70 @@
-<?php
+
 namespace App\Controller;
 
+use App\Service\BookManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Service\BookService;
-use App\Form\BookType;
 
 class BookController extends AbstractController
 {
-    private BookService $bookService;
+    private BookManager $bookManager;
 
-    public function __construct(BookService $bookService)
+    public function __construct(BookManager $bookManager)
     {
-        $this->bookService = $bookService;
+        $this->bookManager = $bookManager;
     }
 
-    #[Route('/books', name: 'book_list')]
+    /**
+     * @Route("/books", name="book_list")
+     */
     public function list(): Response
     {
-        $books = $this->bookService->getAllBooks();
-        return $this->render('book/index.html.twig', ['books' => $books]);
+        $books = $this->bookManager->getBooks();
+        return $this->render('book/list.html.twig', [
+            'books' => $books,
+        ]);
     }
 
-    #[Route('/book/new', name: 'book_new')]
-    public function new(Request $request): Response
+    /**
+     * @Route("/books/add", name="book_add", methods={"POST"})
+     */
+    public function add(Request $request): Response
     {
-        $form = $this->createForm(BookType::class);
-        $form->handleRequest($request);
-        
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->bookService->addBook($form->getData());
-            return $this->redirectToRoute('book_list');
-        }
-        
-        return $this->render('book/new.html.twig', ['form' => $form->createView()]);
+        $title = $request->request->get('title');
+        $author = $request->request->get('author');
+        $year = $request->request->get('year');
+        $description = $request->request->get('description');
+        $imageUrl = $request->request->get('imageUrl');
+
+        $this->bookManager->addBook($title, $author, $year, $description, $imageUrl);
+
+        return $this->redirectToRoute('book_list');
+    }
+
+    /**
+     * @Route("/books/edit/{id}", name="book_edit", methods={"POST"})
+     */
+    public function edit(Request $request, string $id): Response
+    {
+        $title = $request->request->get('title');
+        $author = $request->request->get('author');
+        $year = $request->request->get('year');
+        $description = $request->request->get('description');
+        $imageUrl = $request->request->get('imageUrl');
+
+        $this->bookManager->editBook($id, $title, $author, $year, $description, $imageUrl);
+
+        return $this->redirectToRoute('book_list');
+    }
+
+    /**
+     * @Route("/books/delete/{id}", name="book_delete", methods={"POST"})
+     */
+    public function delete(string $id): Response
+    {
+        $this->bookManager->deleteBook($id);
+        return $this->redirectToRoute('book_list');
     }
 }
