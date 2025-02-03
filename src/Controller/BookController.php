@@ -10,17 +10,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BookController extends AbstractController
+
 {
     private BookManager $bookManager;
-
     public function __construct(BookManager $bookManager)
     {
+        
         $this->bookManager = $bookManager;
     }
 
-    /**
-     * @Route("/books", name="book_list")
-     */
+    #[Route('/book', name: 'book_index')]
     public function list(): Response
     {
         $books = $this->bookManager->getBooks();
